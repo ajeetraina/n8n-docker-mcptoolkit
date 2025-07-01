@@ -87,19 +87,28 @@ curl http://localhost:3001/health
                                                     └──────────────────┘
 ```
 
-**Data Flow Example:**
-```bash
-# 1. n8n makes HTTP request
-POST http://localhost:3001/tools/create_repository
-{"arguments": {"name": "my-repo", "description": "Created via n8n"}}
 
-# 2. Bridge translates to Docker MCP CLI
-docker mcp tools call create_repository '{"name": "my-repo", "description": "Created via n8n"}'
+## Testing the setup
 
-# 3. GitHub MCP Server executes
-GitHub API: POST /user/repos {"name": "my-repo", "description": "Created via n8n"}
+### Test 1: Bridge health
 
-# 4. Response flows back through bridge to n8n
-{"success": true, "data": {"html_url": "https://github.com/user/my-repo"}}
 ```
+curl http://localhost:3001/health
+{"status":"MCP HTTP Bridge Ready","port":3001}%
+```
+
+### Test 2. Docker MCP Toolkit Integration Test
+
+```
+curl http://localhost:3001/test
+```
+
+### Results
+
+```
+curl http://localhost:3001/test
+{"success":true,"data":"Tool call took: 604.375ms\n{\"login\":\"ajeetraina\",\"id\":313480,\"node_id\":\"MDQ6VXNlcjMxMzQ4MA==\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/313480?v=4\",\"html_url\":\"https://github.com/ajeetraina\",\"gravatar_id\":\"\",\"name\":\"Ajeet Singh Raina, Docker Captain, ARM Innovator,\",\"company\":\"Docker Inc\",\"blog\":\"http://www.collabnix.com\",\"location\":\"Bengaluru\",\"email\":\"ajeetraina@gmail.com\",\"hireable\":true,\"bio\":\"Docker Captain, ARM Innovator, Work for Docker Inc, Docker Community Leader, Tip of the Captain's Hat Award Winner, Docker Community Winner @ Dockercon\",\"twitter_username\":\"ajeetsraina\",\"public_repos\":617,\"public_gists\":186,\"followers\":906,\"following\":10,\"created_at\":\"2010-06-24T09:10:23Z\",\"updated_at\":\"2025-06-26T01:55:05Z\",\"type\":\"User\",\"site_admin\"
+```
+
+
 
