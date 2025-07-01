@@ -1,0 +1,34 @@
+{
+  "name": "mcp-http-bridge",
+  "version": "1.0.0",
+  "description": "HTTP bridge for Model Context Protocol (MCP) integration with n8n",
+  "main": "mcp-http-bridge.js",
+  "scripts": {
+    "start": "node mcp-http-bridge.js",
+    "dev": "nodemon mcp-http-bridge.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "n8n",
+    "bridge",
+    "http",
+    "ai",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT"
+}
