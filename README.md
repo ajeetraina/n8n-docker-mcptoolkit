@@ -4,7 +4,7 @@
 
 This repository provides a solution for connecting [n8n](https://n8n.io) workflows with [Docker MCP Toolkit](https://docs.docker.com/desktop/features/mcp/), solving the [community integration challenge](https://community.n8n.io/t/n8n-interact-with-docker-mcp-toolkit/135733).
 
-## 🎯 Problem Solved
+## Problem Solved
 
 **n8n Community Question**: *"How can n8n interact with Docker MCP Toolkit?"*
 
@@ -14,7 +14,14 @@ This repository provides a solution for connecting [n8n](https://n8n.io) workflo
 [n8n Workflow] → HTTP → [Bridge:3001] → docker mcp → [100+ MCP Tools]
 ```
 
-## 🚀 Quick Start
+## Getting Started
+
+### Prerequisite
+
+- Docker Desktop 4.42+ installed
+- Enable Docker MCP Toolkit
+- GitHub MCP added as Server
+
 
 ```bash
 # 1. Clone and setup
