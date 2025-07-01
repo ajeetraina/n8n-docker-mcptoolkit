@@ -1,0 +1,10 @@
+FROM docker.n8n.io/n8nio/n8n:latest
+
+# Switch to root to install Docker CLI
+USER root
+
+# Install Docker CLI only - don't change anything else
+RUN apk add --no-cache docker-cli
+
+# Switch back to original user
+USER node
