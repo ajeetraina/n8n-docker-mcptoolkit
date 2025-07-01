@@ -22,8 +22,26 @@ This repository provides a solution for connecting [n8n](https://n8n.io) workflo
 - Enable Docker MCP Toolkit
 - GitHub MCP added as Server
 
+### Step 1: Download AI Model
 
-### Step 1. Clone and setup
+Pull your preferred models:
+
+```bash
+# Lightweight model (fast, good for testing)
+docker model pull ai/llama3.2:1B-Q8_0
+
+# Balanced model (recommended)
+docker model pull ai/llama3.2:3B
+
+# More capable model
+docker model pull ai/gemma3:2B
+
+# List downloaded models
+docker model ls
+```
+
+
+### Step 2. Clone and setup
 
 
 ```
@@ -31,14 +49,14 @@ git clone https://github.com/ajeetraina/n8n-docker-mcptoolkit
 cd n8n-docker-mcptoolkit
 ```
 
-### Step 2. Start n8n stack
+### Step 3. Start n8n stack
 
 ```
 docker compose up -d --build
 ```
 
 
-### Step 3. Start the bridge
+### Step 4. Start the bridge
 
 ```
 npm install
@@ -48,7 +66,7 @@ node mcp-http-bridge.js
 Keep it running.
 
 
-### Step 4. Test the connection
+### Step 5. Test the connection
 
 ```
 curl http://localhost:3001/health
