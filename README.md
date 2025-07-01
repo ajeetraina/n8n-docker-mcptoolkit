@@ -110,5 +110,27 @@ curl http://localhost:3001/test
 {"success":true,"data":"Tool call took: 604.375ms\n{\"login\":\"ajeetraina\",\"id\":313480,\"node_id\":\"MDQ6VXNlcjMxMzQ4MA==\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/313480?v=4\",\"html_url\":\"https://github.com/ajeetraina\",\"gravatar_id\":\"\",\"name\":\"Ajeet Singh Raina, Docker Captain, ARM Innovator,\",\"company\":\"Docker Inc\",\"blog\":\"http://www.collabnix.com\",\"location\":\"Bengaluru\",\"email\":\"ajeetraina@gmail.com\",\"hireable\":true,\"bio\":\"Docker Captain, ARM Innovator, Work for Docker Inc, Docker Community Leader, Tip of the Captain's Hat Award Winner, Docker Community Winner @ Dockercon\",\"twitter_username\":\"ajeetsraina\",\"public_repos\":617,\"public_gists\":186,\"followers\":906,\"following\":10,\"created_at\":\"2010-06-24T09:10:23Z\",\"updated_at\":\"2025-06-26T01:55:05Z\",\"type\":\"User\",\"site_admin\"
 ```
 
+### Test 3: Generic Tool Call
 
+```
+curl -X POST http://localhost:3001/tools/get_me \
+  -H "Content-Type: application/json" \
+  -d '{"arguments": {}}'
+```
+
+### Test 4: File Creation Tool
+
+```
+curl -X POST http://localhost:3001/tools/create_or_update_file \
+  -H "Content-Type: application/json" \
+  -d '{
+    "arguments": {
+      "owner": "your-username",
+      "repo": "test-repo", 
+      "path": "test.txt",
+      "content": "Hello from n8n bridge!",
+      "message": "Test from bridge"
+    }
+  }'
+```
 
