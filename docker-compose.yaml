@@ -1,0 +1,137 @@
+services:
+  # PostgreSQL database for n8n
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: n8n
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: n8n_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U n8n"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - n8n_network
+
+  # n8n workflow automation with Model Runner integration + Docker MCP access
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile.n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # Database configuration
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n_password
+      
+      # n8n configuration
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=America/New_York
+      
+      # Model Runner integration
+      - N8N_AI_OPENAI_API_BASE=http://model-runner.docker.internal/engines/llama.cpp/v1
+      - N8N_AI_OPENAI_API_KEY=local
+      - N8N_AI_DEFAULT_MODEL=ai/llama3.2:1B-Q8_0
+      
+      # Additional AI configuration
+      - N8N_AI_ENABLED=true
+      - N8N_AI_PROVIDER=openai
+      
+      # Security & Permissions
+      - N8N_ENCRYPTION_KEY=your-encryption-key-change-this
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+      
+      # Enable code execution for advanced workflows
+      - NODE_FUNCTION_ALLOW_BUILTIN=*
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
+      
+      # Docker configuration for MCP access
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./shared:/data/shared  # Shared folder for file operations
+      - /var/run/docker.sock:/var/run/docker.sock  # Enable Docker access for MCP
+    depends_on:
+      postgres:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - n8n_network
+
+  # Redis for queue mode (optional but recommended for production)
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - n8n_network
+
+  # n8n worker for queue mode (optional)
+  n8n-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.n8n
+    restart: unless-stopped
+    command: worker
+    environment:
+      # Database configuration (same as main n8n)
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n_password
+      
+      # Queue configuration
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      
+      # Model Runner integration (same as main n8n)
+      - N8N_AI_OPENAI_API_BASE=http://model-runner.docker.internal/engines/llama.cpp/v1
+      - N8N_AI_OPENAI_API_KEY=local
+      - N8N_AI_DEFAULT_MODEL=ai/llama3.2:1B-Q8_0
+      
+      # Security & Permissions
+      - N8N_ENCRYPTION_KEY=your-encryption-key-change-this
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+      
+      # Docker configuration for MCP access
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./shared:/data/shared
+      - /var/run/docker.sock:/var/run/docker.sock  # Enable Docker access for MCP
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - n8n_network
+
+volumes:
+  postgres_data:
+    driver: local
+  n8n_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  n8n_network:
+    driver: bridge
