@@ -23,18 +23,34 @@ This repository provides a solution for connecting [n8n](https://n8n.io) workflo
 - GitHub MCP added as Server
 
 
-```bash
-# 1. Clone and setup
+### Step 1. Clone and setup
+
+
+```
 git clone https://github.com/ajeetraina/n8n-docker-mcptoolkit
 cd n8n-docker-mcptoolkit
+```
 
-# 2. Start n8n stack
-cd n8n && docker compose up -d
+### Step 2. Start n8n stack
 
-# 3. Start the bridge
-cd ../bridge && npm install && npm start
+```
+docker compose up -d --build
+```
 
-# 4. Test the connection
+
+### Step 3. Start the bridge
+
+```
+npm install
+node mcp-http-bridge.js
+```
+
+Keep it running.
+
+
+### Step 4. Test the connection
+
+```
 curl http://localhost:3001/health
 ```
 
